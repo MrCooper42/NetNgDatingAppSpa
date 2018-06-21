@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../_services/auth.service';
+import {AlertifyService} from '../_services/alertify.service';
+import {JwtHelperService} from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-nav',
@@ -9,29 +11,36 @@ import {AuthService} from '../_services/auth.service';
 export class NavComponent implements OnInit {
   model: any = {};
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private alertify: AlertifyService, private jwtHelperService: JwtHelperService) {
   }
 
   ngOnInit() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.authService.decodedToken = this.jwtHelperService;
+    }
   }
 
   login() {
     this.authService.login(this.model).subscribe(data => {
-      console.log('logged in successfully: ', data);
-  }, error => {
-      console.log('failed to login: ', error);
+      this.alertify.success('logged in successfully: ');
+    }, err => {
+      if (!err.error) {
+        this.alertify.error(err.statusText);
+      } else {
+        this.alertify.error(err.error);
+      }
     });
   }
 
   logout() {
     this.authService.userToken = null;
     localStorage.removeItem('token');
-    console.log('logged out');
+    this.alertify.message('logged out');
   }
 
-  loggedIn(): boolean {
-    const token = localStorage.getItem('token');
-    return !!token;
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
   }
 
 }
