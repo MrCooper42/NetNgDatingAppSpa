@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../_services/auth.service';
 import {AlertifyService} from '../_services/alertify.service';
 import {JwtHelperService} from '@auth0/angular-jwt';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-nav',
@@ -10,14 +11,18 @@ import {JwtHelperService} from '@auth0/angular-jwt';
 })
 export class NavComponent implements OnInit {
   model: any = {};
+  username: String;
 
-  constructor(private authService: AuthService, private alertify: AlertifyService, private jwtHelperService: JwtHelperService) {
+  constructor(protected authService: AuthService,
+              private alertify: AlertifyService,
+              private jwtHelpersService: JwtHelperService,
+              private router: Router
+  ) {
   }
 
   ngOnInit() {
-    const token = localStorage.getItem('token');
-    if (token) {
-      this.authService.decodedToken = this.jwtHelperService;
+    if (this.jwtHelpersService.decodeToken() != null) {
+      this.username = this.jwtHelpersService.decodeToken(this.authService.userToken).unique_name;
     }
   }
 
@@ -27,9 +32,12 @@ export class NavComponent implements OnInit {
     }, err => {
       if (!err.error) {
         this.alertify.error(err.statusText);
-      } else {
+      }
+      if (err.error) {
         this.alertify.error(err.error);
       }
+    }, () => {
+      this.router.navigate(['/members']);
     });
   }
 
@@ -37,6 +45,7 @@ export class NavComponent implements OnInit {
     this.authService.userToken = null;
     localStorage.removeItem('token');
     this.alertify.message('logged out');
+    this.router.navigate(['/home']);
   }
 
   isLoggedIn(): boolean {

@@ -8,13 +8,13 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Dating App</a>
+      <a class="navbar-brand" [routerLink]="['/home']">Dating App</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav" *ngIf="isLoggedIn()">
-        <li><a href="#">Matches</a></li>
-        <li><a href="#">Lists</a></li>
-        <li><a href="#">Messages</a></li>
+        <li routerLinkActive="active"><a [routerLink]="['/members']">Matches</a></li>
+        <li routerLinkActive="active"><a [routerLink]="['/lists']">Lists</a></li>
+        <li routerLinkActive="active"><a [routerLink]="['/messages']">Messages</a></li>
       </ul>
       <form *ngIf="!isLoggedIn()" #loginForm="ngForm" class="navbar-form navbar-right" (ngSubmit)="login()">
         <div class="form-group">
@@ -30,7 +30,7 @@
 
       <ul *ngIf="isLoggedIn()" class="nav navbar-nav navbar-right">
         <li class="dropdown" dropdown>
-          <a href="#" class="dropdown-toggle" dropdownToggle>Welcome {{authService.decodedToken?.unique_name |
+          <a class="dropdown-toggle" dropdownToggle>Welcome {{this.username |
             titlecase}} <span
               class="caret"></span></a>
           <ul class="dropdown-menu" *dropdownMenu>

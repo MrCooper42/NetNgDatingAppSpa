@@ -46,7 +46,7 @@ export class AuthService {
     return (error: any): Observable<T> => {
 
       // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      console.error('error logged', error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
       // console.log(`${operation} failed: ${error.message}`);
